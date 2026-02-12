@@ -6,6 +6,7 @@ export const translations = {
     errorHint: 'Asegúrate de haber creado la tabla',
     errorHint2: 'en Supabase y de configurar las variables de entorno en',
     noApps: 'No hay aplicaciones configuradas.',
+    opening: 'Abriendo…',
   },
   pt: {
     welcome: 'Bem-vindo',
@@ -14,6 +15,7 @@ export const translations = {
     errorHint: 'Certifique-se de que criou a tabela',
     errorHint2: 'no Supabase e de configurar as variáveis de ambiente em',
     noApps: 'Não há aplicações configuradas.',
+    opening: 'A abrir…',
   },
 }
 

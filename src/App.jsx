@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react'
 import { supabase } from './lib/supabase'
+import { translations, langNames } from './i18n/translations'
+
+const LANG_KEY = 'ggmpi-apps-lang'
 
 function AppButton({ app, onOpen }) {
   const handleClick = () => {
@@ -44,7 +47,17 @@ function App() {
   const [apps, setApps] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [search, setSearch] = useState('')
+  const [lang, setLang] = useState(() => {
+    const saved = localStorage.getItem(LANG_KEY)
+    if (saved && (saved === 'es' || saved === 'pt')) return saved
+    return 'es'
+  })
+
+  const t = translations[lang]
+
+  useEffect(() => {
+    localStorage.setItem(LANG_KEY, lang)
+  }, [lang])
 
   useEffect(() => {
     async function fetchApps() {
@@ -66,12 +79,6 @@ function App() {
     fetchApps()
   }, [])
 
-  const filteredApps = search.trim()
-    ? apps.filter(a => 
-        a.name?.toLowerCase().includes(search.toLowerCase())
-      )
-    : apps
-
   return (
     <div className="min-h-screen bg-dark-bg text-gray-100">
       {/* Header */}
@@ -85,33 +92,22 @@ function App() {
                       d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2z" />
               </svg>
             </div>
-            <span className="text-xl font-semibold">Company Apps Hub</span>
+            <span className="text-xl font-semibold">GGMPI Apps Hub</span>
           </div>
-
-          <div className="flex-1 max-w-xl mx-4">
-            <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm">Q</span>
-              <input
-                type="text"
-                placeholder="Buscar aplicaciones..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-8 pr-4 py-2.5 rounded-lg bg-dark-card border border-dark-border 
-                           text-white placeholder-gray-500 focus:outline-none focus:ring-2 
-                           focus:ring-blue-500/50 focus:border-blue-500/50"
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-400">Usuario</span>
-            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500" />
-            <button className="p-2 rounded-lg hover:bg-dark-card transition-colors">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-                      d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
+          <div className="flex items-center gap-1 p-1 rounded-lg bg-dark-card border border-dark-border">
+            {(['es', 'pt']).map((l) => (
+              <button
+                key={l}
+                onClick={() => setLang(l)}
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                  lang === l
+                    ? 'bg-blue-500 text-white'
+                    : 'text-gray-400 hover:text-white hover:bg-dark-cardHover'
+                }`}
+              >
+                {langNames[l]}
+              </button>
+            ))}
           </div>
         </div>
       </header>
@@ -119,8 +115,8 @@ function App() {
       {/* Main content */}
       <main className="max-w-7xl mx-auto px-6 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-1">Bienvenido</h1>
-          <p className="text-gray-500">Accede a todas las aplicaciones de la empresa</p>
+          <h1 className="text-3xl font-bold text-white mb-1">{t.welcome}</h1>
+          <p className="text-gray-500">{t.subtitle}</p>
         </div>
 
         {loading ? (
@@ -131,22 +127,19 @@ function App() {
           </div>
         ) : error ? (
           <div className="rounded-xl bg-red-500/10 border border-red-500/30 p-6">
-            <p className="text-red-400 font-medium">Error al cargar las aplicaciones</p>
+            <p className="text-red-400 font-medium">{t.errorTitle}</p>
             <p className="text-gray-400 text-sm mt-2">{error}</p>
             <p className="text-gray-500 text-xs mt-4">
-              Asegúrate de haber creado la tabla <code className="bg-dark-card px-1 rounded">apps</code> en Supabase 
-              y de configurar las variables de entorno en <code className="bg-dark-card px-1 rounded">.env</code>.
+              {t.errorHint} <code className="bg-dark-card px-1 rounded">apps</code> {t.errorHint2} <code className="bg-dark-card px-1 rounded">.env</code>.
             </p>
           </div>
-        ) : filteredApps.length === 0 ? (
+        ) : apps.length === 0 ? (
           <div className="rounded-xl bg-dark-card border border-dark-border p-12 text-center">
-            <p className="text-gray-500">
-              {search ? 'No hay aplicaciones que coincidan con tu búsqueda.' : 'No hay aplicaciones configuradas.'}
-            </p>
+            <p className="text-gray-500">{t.noApps}</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            {filteredApps.map((app) => (
+            {apps.map((app) => (
               <AppButton key={app.id} app={app} />
             ))}
           </div>

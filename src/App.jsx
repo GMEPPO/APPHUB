@@ -110,7 +110,7 @@ function App() {
                   animationFillMode: 'forwards',
                 }}
               >
-                <AppCard app={app} index={index} openingText={t.opening} />
+                <AppCard app={app} index={index} />
               </div>
             ))}
           </div>

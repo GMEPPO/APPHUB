@@ -32,8 +32,8 @@ npm run dev
 |------------|-------|-------------|--------------------------------------|
 | `name`     | text  | Sí          | Nombre del botón                     |
 | `link`     | text  | Sí          | URL de redirección                   |
-| `icon`     | text  | No          | URL de imagen para el icono          |
-| `icon_emoji` | text | No        | Emoji como icono (ej: '📊')          |
+| `icon`     | text  | No          | URL completa o ruta en bucket "Icons app hub" (ej: `powerbi.png`) |
+| `icon_emoji` | text | No        | Emoji como icono (ej: '📊'). Prioridad sobre `icon` |
 | `orden`    | int   | No          | Orden de aparición (menor = primero) |
 
-Si no usas `icon` ni `icon_emoji`, se mostrará la primera letra del nombre.
+**Iconos:** puedes usar `icon_emoji`, o `icon` con: una URL completa (`https://...`) o la ruta del archivo en el bucket Supabase Storage "Icons app hub". Si ambos están vacíos, se usa la primera letra del nombre.

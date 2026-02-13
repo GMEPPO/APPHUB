@@ -1,4 +1,5 @@
 import { useRef, useState, useCallback } from 'react'
+import { getIconUrl } from '../lib/supabase'
 
 export default function AppCard({ app, index = 0, onOpen }) {
   const cardRef = useRef(null)
@@ -23,8 +24,8 @@ export default function AppCard({ app, index = 0, onOpen }) {
     setMouse({ x: 0.5, y: 0.5 })
   }, [])
 
-  const iconUrl = app.icon
-  const iconEmoji = app.icon_emoji
+  const iconUrl = getIconUrl(app.icon)
+  const iconEmoji = iconUrl ? null : app.icon_emoji
 
   const spotlightStyle = {
     background: `

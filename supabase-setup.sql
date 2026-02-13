@@ -5,8 +5,8 @@ CREATE TABLE IF NOT EXISTS apps (
   id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   name TEXT NOT NULL,
   link TEXT NOT NULL,
-  icon TEXT,                    -- URL de imagen (opcional)
-  icon_emoji TEXT,              -- Emoji como icono (opcional, ej: '📊')
+  icon TEXT,                    -- URL completa O ruta en bucket "Icons app hub" (ej: 'powerbi.png')
+  icon_emoji TEXT,              -- Emoji (opcional). Se usa solo si no hay icon
   orden INT DEFAULT 0,          -- Para ordenar los botones
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -14,9 +14,13 @@ CREATE TABLE IF NOT EXISTS apps (
 -- Habilitar Row Level Security (RLS) - permite lectura pública para anon
 ALTER TABLE apps ENABLE ROW LEVEL SECURITY;
 
--- Política: permitir lectura pública a todos
+-- Política: permitir lectura pública a todos (DROP evita error si ya existe)
+DROP POLICY IF EXISTS "Allow public read access" ON apps;
 CREATE POLICY "Allow public read access" ON apps
   FOR SELECT USING (true);
+
+-- Para usar imágenes del bucket "Icons app hub": sube el archivo y usa la ruta en icon.
+-- Ejemplo: icon = 'powerbi.png' o 'logos/powerbi.png'
 
 -- Datos de ejemplo (opcional - puedes eliminarlos después)
 INSERT INTO apps (name, link, icon_emoji, orden) VALUES

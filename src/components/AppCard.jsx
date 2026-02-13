@@ -44,8 +44,7 @@ export default function AppCard({ app, index = 0, onOpen }) {
       onClick={handleClick}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="app-card relative overflow-hidden flex flex-col items-center justify-center gap-3 p-6 
-                 min-h-[140px] w-full text-left rounded-xl border
+      className="app-card relative overflow-hidden flex flex-col w-full text-left rounded-xl border
                  bg-[#1e2a3a] border-[#2d3d52] 
                  transition-[transform,box-shadow,border-color] duration-300 ease-out
                  hover:scale-[1.02] hover:border-blue-500/40 
@@ -64,24 +63,28 @@ export default function AppCard({ app, index = 0, onOpen }) {
         aria-hidden
       />
 
-      {/* Card content */}
+      {/* Zona rectangular superior: icono/imagen */}
       <div
-        className="relative flex-shrink-0 w-16 h-16 flex items-center justify-center rounded-lg 
-                   bg-[#0f1419]/70 group-hover:bg-blue-500/15 transition-colors duration-300"
+        className="relative w-full aspect-[4/3] min-h-[100px] flex items-center justify-center 
+                   bg-[#0f1419]/80 group-hover:bg-[#1a2636] transition-colors duration-300 
+                   p-4"
       >
         {iconUrl ? (
-          <img src={iconUrl} alt="" className="w-10 h-10 object-contain" />
+          <img src={iconUrl} alt="" className="max-w-full max-h-full w-auto h-auto object-contain" />
         ) : iconEmoji ? (
-          <span className="text-4xl">{iconEmoji}</span>
+          <span className="text-5xl md:text-6xl">{iconEmoji}</span>
         ) : (
-          <span className="text-4xl text-blue-400 font-bold">
+          <span className="text-5xl md:text-6xl text-blue-400 font-bold">
             {app.name?.charAt(0) || '?'}
           </span>
         )}
       </div>
-      <span className="relative text-white font-medium text-sm text-center line-clamp-2">
-        {app.name}
-      </span>
+      {/* Texto debajo */}
+      <div className="relative flex-1 flex items-center justify-center p-4 min-h-[56px]">
+        <span className="text-white font-medium text-sm text-center line-clamp-2">
+          {app.name}
+        </span>
+      </div>
     </button>
   )
 }

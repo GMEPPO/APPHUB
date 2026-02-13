@@ -84,7 +84,7 @@ function App() {
         {loading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {[...Array(10)].map((_, i) => (
-              <div key={i} className="h-[140px] rounded-xl bg-[#1e2a3a] animate-pulse" />
+              <div key={i} className="h-[200px] rounded-xl bg-[#1e2a3a] animate-pulse" />
             ))}
           </div>
         ) : error ? (

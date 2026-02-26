@@ -7,6 +7,8 @@ export const translations = {
     errorHint2: 'en Supabase y de configurar las variables de entorno en',
     noApps: 'No hay aplicaciones configuradas.',
     opening: 'Abriendo…',
+    categoryAll: 'General',
+    noAppsInCategory: 'No hay aplicaciones en esta categoría.',
   },
   pt: {
     welcome: 'Bem-vindo',
@@ -16,6 +18,8 @@ export const translations = {
     errorHint2: 'no Supabase e de configurar as variáveis de ambiente em',
     noApps: 'Não há aplicações configuradas.',
     opening: 'A abrir…',
+    categoryAll: 'Geral',
+    noAppsInCategory: 'Não há aplicações nesta categoria.',
   },
 }
 

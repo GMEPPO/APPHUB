@@ -34,6 +34,10 @@ npm run dev
 | `link`     | text  | Sí          | URL de redirección                   |
 | `icon`     | text  | No          | URL completa o ruta en bucket "Icons app hub" (ej: `powerbi.png`) |
 | `icon_emoji` | text | No        | Emoji como icono (ej: '📊'). Prioridad sobre `icon` |
+| `category_es` | text | No      | Nombre de la categoría en español (filtro y botones) |
+| `category_pt` | text | No      | Nombre de la categoría en portugués (botones) |
 | `orden`    | int   | No          | Orden de aparición (menor = primero) |
+
+**Categorías:** rellena `category_es` y `category_pt` para que los botones del menú y el título de la sección se muestren en el idioma seleccionado.
 
 **Iconos:** puedes usar `icon_emoji`, o `icon` con: una URL completa (`https://...`) o la ruta del archivo en el bucket Supabase Storage "Icons app hub". Si ambos están vacíos, se usa la primera letra del nombre.

@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS apps (
   link TEXT NOT NULL,
   icon TEXT,                    -- URL completa O ruta en bucket "Icons app hub" (ej: 'powerbi.png')
   icon_emoji TEXT,              -- Emoji (opcional). Se usa solo si no hay icon
-  category TEXT,                -- Categoría para filtrar (ej: 'BI', 'CRM'). Vacío/NULL = solo en General
+  category_es TEXT,             -- Nombre de la categoría en español (para filtrar y mostrar)
+  category_pt TEXT,             -- Nombre de la categoría en portugués (para mostrar)
   orden INT DEFAULT 0,          -- Para ordenar los botones
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -20,17 +21,21 @@ DROP POLICY IF EXISTS "Allow public read access" ON apps;
 CREATE POLICY "Allow public read access" ON apps
   FOR SELECT USING (true);
 
--- Si la tabla ya existía sin category, añadir la columna:
+-- Si la tabla ya existía, añadir columnas de categoría si faltan:
 ALTER TABLE apps ADD COLUMN IF NOT EXISTS category TEXT;
+ALTER TABLE apps ADD COLUMN IF NOT EXISTS category_es TEXT;
+ALTER TABLE apps ADD COLUMN IF NOT EXISTS category_pt TEXT;
 
 -- Para usar imágenes del bucket "Icons app hub": sube el archivo y usa la ruta en icon.
 -- Ejemplo: icon = 'powerbi.png' o 'logos/powerbi.png'
 
+-- Categorías: rellenar category_es y category_pt para que la web muestre el nombre según idioma.
+
 -- Datos de ejemplo (opcional - puedes eliminarlos después)
-INSERT INTO apps (name, link, icon_emoji, category, orden) VALUES
-  ('Power BI', 'https://app.powerbi.com', '📊', 'BI', 1),
-  ('Salesforce CRM', 'https://login.salesforce.com', '☁️', 'CRM', 2),
-  ('HR & Payroll', 'https://example.com/hr', '👤', 'RRHH', 3),
-  ('Project Management', 'https://example.com/projects', '📋', 'Proyectos', 4),
-  ('ERP System', 'https://example.com/erp', '⚙️', NULL, 5),
-  ('IT Help Desk', 'https://example.com/helpdesk', '🎧', 'IT', 6);
+INSERT INTO apps (name, link, icon_emoji, category_es, category_pt, orden) VALUES
+  ('Power BI', 'https://app.powerbi.com', '📊', 'BI', 'BI', 1),
+  ('Salesforce CRM', 'https://login.salesforce.com', '☁️', 'CRM', 'CRM', 2),
+  ('HR & Payroll', 'https://example.com/hr', '👤', 'RRHH', 'Recursos Humanos', 3),
+  ('Project Management', 'https://example.com/projects', '📋', 'Proyectos', 'Projetos', 4),
+  ('ERP System', 'https://example.com/erp', '⚙️', NULL, NULL, 5),
+  ('IT Help Desk', 'https://example.com/helpdesk', '🎧', 'IT', 'IT', 6);

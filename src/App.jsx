@@ -5,7 +5,12 @@ import AppCard from './components/AppCard'
 
 const LANG_KEY = 'ggmpi-apps-lang'
 
-const CATEGORY_ALL = null // "General" / "Geral" = mostrar todos
+const CATEGORY_ALL = null // "Todos" = mostrar todos
+
+// Clave de categoría para filtrar (category_es)
+function getCategoryKey(a) {
+  return a.category_es ?? ''
+}
 
 function App() {
   const [apps, setApps] = useState([])
@@ -20,12 +25,33 @@ function App() {
 
   const t = translations[lang]
 
-  const getCategory = (a) => a.category ?? a.Category ?? ''
-  const categories = [...new Set(apps.map((a) => getCategory(a)).filter(Boolean))].sort()
+  // Lista única de categorías con etiquetas en es y pt (usa category_es como clave)
+  const categoryMap = {}
+  apps.forEach((a) => {
+    const key = getCategoryKey(a)
+    if (!key) return
+    if (!categoryMap[key]) {
+      categoryMap[key] = {
+        key,
+        labelEs: a.category_es ?? key,
+        labelPt: a.category_pt ?? a.category_es ?? key,
+      }
+    }
+  })
+  const categories = Object.values(categoryMap).sort((a, b) =>
+    (a.labelEs || a.key).localeCompare(b.labelEs || b.key)
+  )
+
   const filteredApps =
     selectedCategory === CATEGORY_ALL
       ? apps
-      : apps.filter((a) => getCategory(a) === selectedCategory)
+      : apps.filter((a) => getCategoryKey(a) === selectedCategory)
+
+  const selectedCat = categories.find((c) => c.key === selectedCategory)
+  const selectedCategoryLabel =
+    selectedCategory === CATEGORY_ALL
+      ? null
+      : (lang === 'pt' ? selectedCat?.labelPt : selectedCat?.labelEs) ?? selectedCategory
 
   useEffect(() => {
     localStorage.setItem(LANG_KEY, lang)
@@ -99,15 +125,15 @@ function App() {
                 </button>
                 {categories.map((cat) => (
                   <button
-                    key={cat}
-                    onClick={() => setSelectedCategory(cat)}
+                    key={cat.key}
+                    onClick={() => setSelectedCategory(cat.key)}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      selectedCategory === cat
+                      selectedCategory === cat.key
                         ? 'bg-blue-500 text-white'
                         : 'bg-[#1e2a3a] text-gray-400 hover:text-white hover:bg-[#243044] border border-[#2d3d52]'
                     }`}
                   >
-                    {cat}
+                    {lang === 'pt' ? cat.labelPt : cat.labelEs}
                   </button>
                 ))}
               </div>
@@ -119,8 +145,12 @@ function App() {
       {/* Main content */}
       <main className="max-w-7xl mx-auto px-6 py-8">
         <div className="mb-8 opacity-0 animate-fade-in">
-          <h1 className="text-3xl font-bold text-white mb-1">{t.welcome}</h1>
-          <p className="text-gray-500">{t.subtitle}</p>
+          <h1 className="text-3xl font-bold text-white mb-1">
+            {selectedCategoryLabel ?? t.welcome}
+          </h1>
+          <p className="text-gray-500">
+            {selectedCategoryLabel ? t.subtitleCategory : t.subtitle}
+          </p>
         </div>
 
         {loading ? (

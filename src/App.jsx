@@ -7,9 +7,32 @@ const LANG_KEY = 'ggmpi-apps-lang'
 
 const CATEGORY_ALL = null // "Todos" = mostrar todos
 
-// Clave de categoría para filtrar (category_es)
-function getCategoryKey(a) {
-  return a.category_es ?? ''
+/** Partir "RH, Comercial" en ["RH", "Comercial"]. Solo coma ASCII para no fallar. */
+function splitByComma(str) {
+  if (str == null || typeof str !== 'string') return []
+  return str
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean)
+}
+
+function getCatEs(a) {
+  return a?.category_es ?? a?.Category_es ?? ''
+}
+function getCatPt(a) {
+  return a?.category_pt ?? a?.Category_pt ?? ''
+}
+
+/** Lista de claves de categoría de esta app (cada una por separado). */
+function getCategoryKeys(a) {
+  const es = splitByComma(getCatEs(a))
+  const pt = splitByComma(getCatPt(a))
+  const keys = new Set()
+  for (let i = 0; i < Math.max(es.length, pt.length); i++) {
+    const k = (es[i] || pt[i] || '').trim()
+    if (k) keys.add(k)
+  }
+  return [...keys]
 }
 
 function App() {
@@ -25,27 +48,28 @@ function App() {
 
   const t = translations[lang]
 
-  // Lista única de categorías con etiquetas en es y pt (usa category_es como clave)
+  // Una categoría por parte: "RH, Comercial" → botones "RH" y "Comercial". NUNCA un botón con coma.
   const categoryMap = {}
   apps.forEach((a) => {
-    const key = getCategoryKey(a)
-    if (!key) return
-    if (!categoryMap[key]) {
-      categoryMap[key] = {
-        key,
-        labelEs: a.category_es ?? key,
-        labelPt: a.category_pt ?? a.category_es ?? key,
-      }
+    const esParts = splitByComma(getCatEs(a))
+    const ptParts = splitByComma(getCatPt(a))
+    const n = Math.max(esParts.length, ptParts.length, 1)
+    for (let i = 0; i < n; i++) {
+      const labelEs = (esParts[i] || ptParts[i] || '').trim()
+      const labelPt = (ptParts[i] || esParts[i] || labelEs).trim()
+      const key = labelEs || labelPt
+      if (!key || key.includes(',')) continue
+      if (!categoryMap[key]) categoryMap[key] = { key, labelEs, labelPt }
     }
   })
-  const categories = Object.values(categoryMap).sort((a, b) =>
-    (a.labelEs || a.key).localeCompare(b.labelEs || b.key)
-  )
+  const categories = Object.values(categoryMap)
+    .filter((c) => !c.key.includes(','))
+    .sort((a, b) => (a.labelEs || a.key).localeCompare(b.labelEs || b.key))
 
   const filteredApps =
     selectedCategory === CATEGORY_ALL
       ? apps
-      : apps.filter((a) => getCategoryKey(a) === selectedCategory)
+      : apps.filter((a) => getCategoryKeys(a).includes(selectedCategory))
 
   const selectedCat = categories.find((c) => c.key === selectedCategory)
   const selectedCategoryLabel =

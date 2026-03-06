@@ -7,8 +7,8 @@ CREATE TABLE IF NOT EXISTS apps (
   link TEXT NOT NULL,
   icon TEXT,                    -- URL completa O ruta en bucket "Icons app hub" (ej: 'powerbi.png')
   icon_emoji TEXT,              -- Emoji (opcional). Se usa solo si no hay icon
-  category_es TEXT,             -- Nombre de la categoría en español (para filtrar y mostrar)
-  category_pt TEXT,             -- Nombre de la categoría en portugués (para mostrar)
+  category_es TEXT,             -- Una o más categorías en español, separadas por coma (ej: 'Comercial, Geral, Suporte')
+  category_pt TEXT,             -- Una o más categorías en portugués, mismo orden que category_es (ej: 'Comercial, Geral, Suporte')
   orden INT DEFAULT 0,          -- Para ordenar los botones
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -22,18 +22,19 @@ CREATE POLICY "Allow public read access" ON apps
   FOR SELECT USING (true);
 
 -- Si la tabla ya existía, añadir columnas de categoría si faltan:
-ALTER TABLE apps ADD COLUMN IF NOT EXISTS category TEXT;
 ALTER TABLE apps ADD COLUMN IF NOT EXISTS category_es TEXT;
 ALTER TABLE apps ADD COLUMN IF NOT EXISTS category_pt TEXT;
 
 -- Para usar imágenes del bucket "Icons app hub": sube el archivo y usa la ruta en icon.
 -- Ejemplo: icon = 'powerbi.png' o 'logos/powerbi.png'
 
--- Categorías: rellenar category_es y category_pt para que la web muestre el nombre según idioma.
+-- Categorías: pueden ser varias por app, separadas por coma. category_es y category_pt deben tener
+-- el mismo número de valores en el mismo orden (ej: category_es='Comercial, Geral' category_pt='Comercial, Geral').
 
+-- Ejemplo con varias categorías por app: category_es='Comercial, Geral' hace que el botón aparezca en ambos filtros.
 -- Datos de ejemplo (opcional - puedes eliminarlos después)
 INSERT INTO apps (name, link, icon_emoji, category_es, category_pt, orden) VALUES
-  ('Power BI', 'https://app.powerbi.com', '📊', 'BI', 'BI', 1),
+  ('Power BI', 'https://app.powerbi.com', '📊', 'BI, Geral', 'BI, Geral', 1),
   ('Salesforce CRM', 'https://login.salesforce.com', '☁️', 'CRM', 'CRM', 2),
   ('HR & Payroll', 'https://example.com/hr', '👤', 'RRHH', 'Recursos Humanos', 3),
   ('Project Management', 'https://example.com/projects', '📋', 'Proyectos', 'Projetos', 4),

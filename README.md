@@ -34,8 +34,8 @@ npm run dev
 | `link`     | text  | Sí          | URL de redirección                   |
 | `icon`     | text  | No          | URL completa o ruta en bucket "Icons app hub" (ej: `powerbi.png`) |
 | `icon_emoji` | text | No        | Emoji como icono (ej: '📊'). Prioridad sobre `icon` |
-| `category_es` | text | No      | Nombre de la categoría en español (filtro y botones) |
-| `category_pt` | text | No      | Nombre de la categoría en portugués (botones) |
+| `category_es` | text | No      | Una o más categorías en español, separadas por coma (ej: `Comercial, Geral`) |
+| `category_pt` | text | No      | Mismas categorías en portugués, mismo orden (ej: `Comercial, Geral`) |
 | `orden`    | int   | No          | Orden de aparición (menor = primero) |
 
 **Categorías:** rellena `category_es` y `category_pt` para que los botones del menú y el título de la sección se muestren en el idioma seleccionado.
